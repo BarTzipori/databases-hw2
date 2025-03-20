@@ -36,7 +36,7 @@ def createTable() -> None:
     conn = None
     try:
         conn = Connector.DBConnector()
-        conn.execute("CREATE TABLE Users(id INTEGER PRIMARY KEY, name TEXT NOT NULL)")
+        conn.execute("CREATE TABLE Users(id INTEGER PRIMARY KEY, name TEXT NOT NULL, CONSTRAINT legal_id CHECK (id >= 1 and id <= 10) NOT VALID)")
     except DatabaseException.ConnectionInvalid as e:
         print(e)
     except DatabaseException.NOT_NULL_VIOLATION as e:
@@ -79,6 +79,8 @@ def getUsers(printSchema) -> ResultSet:
 
 
 def addUser(ID: int, name: str) -> ReturnValue:
+    #if not isinstance(ID, int):
+     #   return ReturnValue.BAD_PARAMS
     conn = None
     try:
         conn = Connector.DBConnector()
@@ -123,6 +125,7 @@ def deleteUser(ID: int) -> int:
         print(e)
     finally:
         conn.close()
+        print(rows_effected)
         return rows_effected
 
 
@@ -132,7 +135,7 @@ if __name__ == '__main__':
     print("1. Add user with ID 1 and name Roei")
     addUser(1, 'Roei')
     print("2. Add user with ID 2 and name Noa")
-    addUser(2, 'Noa')
+    addUser(10, 'Noa')
     print("3. Printing all users")
     users = getUsers(printSchema=True)  # will cause printing the users, because printSchema=true in getUsers()
     print('4. Printing user in the second row')
@@ -140,8 +143,8 @@ if __name__ == '__main__':
     print("5. Printing all IDs")
     for index in range(users.size()):
         print(users[index]['ID'])
-    print("6. Delete user with ID 1")
-    deleteUser(1)
+    print("6. Delete user with ID 8")
+    deleteUser(8)
     print("7. Printing all users")
     users = getUsers(printSchema=False)  # will not cause printing the users, because printSchema=false in getUsers()
     # print users
